@@ -97,31 +97,62 @@ pub fn make_table(samples: Vec<Sample>, z: u16, x: u16, y: u16) -> Result<Table,
         next();
     }
     for i in 1..z {
-      current.set([i, 1, 1]);
-      'inner: loop {
-        let sample_max=samples.len()-1;
-        let cur=current.get();
-        let before=*table.get(&[cur[0]-1, cur[1], cur[2]]).unwrap_or(&empty_sample);
-        if usize::from(before.id)==sample_max {
-          table.insert(cur, samples[0]);
+        current.set([i, 1, 1]);
+        'inner: loop {
+            let sample_max = samples.len() - 1;
+            let cur = current.get();
+            let before = *table
+                .get(&[cur[0] - 1, cur[1], cur[2]])
+                .unwrap_or(&empty_sample);
+            if usize::from(before.id) == sample_max {
+                table.insert(cur, samples[0]);
+            } else {
+                table.insert(cur, samples[usize::from(before.id + 1)]);
+            }
+            if cur[1] == x && cur[2] == y {
+                break 'inner;
+            }
+            next();
         }
-        else{
-          table.insert(cur, samples[usize::from(before.id+1)]);
-        }
-        if cur[1]==x && cur[2]==y{break 'inner;}
-        next();
-      }
     }
+
     Ok(Table {
         table,
-        length: z,
-        width: x,
-        height: y,
+        length: x,
+        width: y,
+        height: z,
     })
 }
 
-pub fn test(){
-    let table=make_table(
+pub fn generate_vector(table: Table) -> Vec<Vec<Vec<Sample>>> {
+    let null_smp = Sample { id: 0, dummy: true };
+    /*    let mut a: Vec<Vec<Vec<Sample>>> =
+    vec![
+        vec!(vec!(null_smp; usize::from(table.width)); usize::from(table.length));
+        usize::from(table.height)
+    ];*/
+    let mut a: Vec<Vec<Vec<Sample>>> = vec![];
+    for i in 0..table.height {
+        let empty_page: Vec<Vec<Sample>> = vec![];
+        a.push(empty_page);
+        for ii in 0..table.length {
+            let empty_line: Vec<Sample> = vec![];
+            a[usize::from(i)].push(empty_line);
+            'inner: for iii in 0..table.width {
+                let key: [u16; 3] = [i, ii + 1, iii + 1];
+                if !table.table.contains_key(&key) {
+                    continue 'inner;
+                }
+                let sample = *table.table.get(&key).unwrap_or(&null_smp);
+                a[usize::from(i)][usize::from(ii)].push(sample);
+            }
+        }
+    }
+    a
+}
+
+pub fn test() {
+    let table = make_table(
         vec![
             Sample {
                 id: 0,
@@ -164,10 +195,12 @@ pub fn test(){
         3,
         3,
     );
-    match(table){
-      Ok(x)=>{
-        println!("{:?}",x.table);
-      }
-      _=>{}
+    match (table) {
+        Ok(x) => {
+            println!("{:?}", x.table);
+            let vec = generate_vector(x);
+            println!("converted vector:\n{:?}]", vec);
+        }
+        _ => {}
     };
-  }
+}
