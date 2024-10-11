@@ -21,8 +21,6 @@ pub enum MakeTableError {
     Other,
 }
 
-// The given sample list should be sorted in ascending order, and the data's id field should be equal to its index in the vector
-// The resulting 3D vector is arranged as [z,x,y], starting with [0,1,1]
 pub fn make_table(
     samples: Vec<Sample>,
     pages: usize,
