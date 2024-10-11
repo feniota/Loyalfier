@@ -21,6 +21,8 @@ pub enum MakeTableError {
     Other,
 }
 
+// The given sample list should be sorted in ascending order, and the data's id field should be equal to its index in the vector
+// The resulting 3D vector is arranged as [z,x,y], starting with [0,1,1]
 pub fn make_table(
     samples: Vec<Sample>,
     pages: usize,
@@ -36,7 +38,8 @@ pub fn make_table(
     }
 
     //创建三维列表，由外至内分别为行，列，页
-    let mut table: Vec<Vec<Vec<Sample>>> = Vec::new();
+    let mut table: Vec<Vec<Vec<Sample>>> =
+        vec![vec![vec![Sample { id: 0, dummy: true }; pages + 1]; columns + 1]; rows + 1];
 
     for x in 1..rows {
         for y in 1..columns {
