@@ -32,7 +32,7 @@ pub fn make_table(
     if rows == 0 || columns == 0 || pages == 0 || samples.is_empty() {
         //判断行列页是否为0，以及Sample是否为空
         return Err(MakeTableError::InvalidParameter);
-    } else if samples.len() < pages * 4 || samples.len() < 9 {
+    } else if samples.len() < (pages * 4) || samples.len() < 9 {
         //判断样本是否充足
         return Err(MakeTableError::NotEnoughSamples);
     }
@@ -40,7 +40,6 @@ pub fn make_table(
     //创建三维列表，由外至内分别为行，列，页
     let mut table: Vec<Vec<Vec<Sample>>> = Vec::new();
 
-    //填写列表
     for x in 1..rows {
         for y in 1..columns {
             for z in 1..pages {
@@ -61,7 +60,6 @@ pub fn make_table(
     }
     Ok(table)
 }
-
 
 pub fn test() {
     let table = make_table(
@@ -107,7 +105,7 @@ pub fn test() {
         3,
         3,
     );
-    match (table) {
+    match table {
         Ok(x) => {
             println!("converted vector:\n{:?}]", x)
         }
