@@ -37,11 +37,11 @@ pub fn make_table(
 
     //创建三维列表，由外至内分别为行，列，页
     let mut table: Vec<Vec<Vec<Sample>>> =
-        vec![vec![vec![Sample { id: 0, dummy: true }; pages + 1]; columns + 1]; rows + 1];
+        vec![vec![vec![Sample { id: 0, dummy: true }; pages]; columns + 2]; rows + 2];
 
-    for x in 1..rows {
-        for y in 1..columns {
-            for z in 1..pages {
+    for x in 1..(rows + 1) {
+        for y in 1..(columns + 1) {
+            for z in 0..pages {
                 let minusion = samples
                     .iter()
                     .filter(|&u| {
@@ -97,6 +97,22 @@ pub fn test() {
             },
             Sample {
                 id: 8,
+                dummy: false,
+            },
+            Sample {
+                id: 9,
+                dummy: false,
+            },
+            Sample {
+                id: 10,
+                dummy: false,
+            },
+            Sample {
+                id: 11,
+                dummy: false,
+            },
+            Sample {
+                id: 12,
                 dummy: false,
             },
         ],
