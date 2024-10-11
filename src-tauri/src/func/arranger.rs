@@ -2,7 +2,7 @@ use rand::{seq::SliceRandom, thread_rng};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Sample {
-    id: u16,
+    id: usize,
     dummy: bool,
 }
 impl PartialEq for Sample {
