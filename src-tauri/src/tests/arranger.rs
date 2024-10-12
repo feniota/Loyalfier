@@ -1,79 +1,49 @@
-use crate::func::arranger::{Sample, make_table};
+use crate::func::arranger::{make_table, Sample};
 
 #[test]
 pub fn test() {
-    let rows = 3;
-    let columns = 3;
-    let pages = 3;
-    let table = make_table(
-        vec![
-            Sample {
-                id: 0,
-                dummy: false,
-            },
-            Sample {
-                id: 1,
-                dummy: false,
-            },
-            Sample {
-                id: 2,
-                dummy: false,
-            },
-            Sample {
-                id: 3,
-                dummy: false,
-            },
-            Sample {
-                id: 4,
-                dummy: false,
-            },
-            Sample {
-                id: 5,
-                dummy: false,
-            },
-            Sample {
-                id: 6,
-                dummy: false,
-            },
-            Sample {
-                id: 7,
-                dummy: false,
-            },
-            Sample {
-                id: 8,
-                dummy: false,
-            },
-            Sample {
-                id: 9,
-                dummy: false,
-            },
-            Sample {
-                id: 10,
-                dummy: false,
-            },
-            Sample {
-                id: 11,
-                dummy: false,
-            },
-            Sample {
-                id: 12,
-                dummy: false,
-            },
-        ],
-        pages,
-        rows,
-        columns,
-    );
+    //测试配置
+    let rows = 3; //行
+    let columns = 3; //列
+    let pages = 3; //页
+
+    //样本生成
+    let mut samples = vec![];
+    for i in 0..(pages * 4) {
+        samples.push(Sample {
+            id: i,
+            dummy: false,
+        });
+    }
+    let table = make_table(samples, pages, rows, columns);
     match table {
         Ok(x) => {
-            assert_eq!(x.len(), rows + 2);
-            assert_eq!(x[0].len(), columns + 1);
-            assert_eq!(x[0][0].len(), pages);
+            assert_eq!(
+                x.len(),
+                rows + 2,
+                "行数错误，预期为{}，实际为{}",
+                rows + 2,
+                x.len()
+            );
+            assert_eq!(
+                x[0].len(),
+                columns + 1,
+                "列数错误，预期为{}，实际为{}",
+                columns + 1,
+                x[0].len()
+            );
+            assert_eq!(
+                x[0][0].len(),
+                pages,
+                "页数错误，预期为{}，实际为{}",
+                pages,
+                x[0][0].len()
+            );
             assert_ne!(x[1][1][0], Sample { id: 0, dummy: true });
             println!("converted vector:\n{:?}]", x)
         }
         Err(x) => {
-            panic!("Encountered unexpected error {:?}", x);
+            assert!(false, "Encountered unexpected error {:?}", x)
         }
     };
 }
