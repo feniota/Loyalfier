@@ -14,7 +14,6 @@ impl PartialEq for Sample {
         }
     }
 }
-
 pub enum MakeTableError {
     NotEnoughSamples,
     InvalidParameter,
@@ -39,6 +38,10 @@ pub fn make_table(
     let mut table: Vec<Vec<Vec<Sample>>> =
         vec![vec![vec![Sample { id: 0, dummy: true }; pages]; columns + 1]; rows + 2];
 
+    //初始化Rand
+    let mut rng = thread_rng();
+
+    //填充列表
     for x in 1..(rows + 1) {
         for y in 1..(columns + 1) {
             for z in 0..pages {
@@ -52,16 +55,19 @@ pub fn make_table(
                             && !table[x][y].contains(u) //排除同位置元素
                     })
                     .collect::<Vec<_>>();
-                let mut rng = thread_rng();
-                table[x][y].remove(z);
-                table[x][y].insert(z, **minusion.choose(&mut rng).unwrap());
+                table[x][y].remove(z); //移除当前位置空元素，防止Vector扩大造成开销
+                table[x][y].insert(z, **minusion.choose(&mut rng).unwrap()); //填入当前元素
             }
         }
     }
     Ok(table)
 }
 
+#[test]
 pub fn test() {
+    let Rows = 3;
+    let Columns = 3;
+    let Pages = 3;
     let table = make_table(
         vec![
             Sample {
@@ -117,12 +123,16 @@ pub fn test() {
                 dummy: false,
             },
         ],
-        3,
-        3,
-        3,
+        Pages,
+        Rows,
+        Columns,
     );
     match table {
         Ok(x) => {
+            assert_eq!(x.len(), Rows + 2);
+            assert_eq!(x[0].len(), Columns + 1);
+            assert_eq!(x[0][0].len(), Pages);
+            assert_ne!(x[1][1][0], Sample { id: 0, dummy: true });
             println!("converted vector:\n{:?}]", x)
         }
         _ => {}
