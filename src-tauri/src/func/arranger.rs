@@ -37,7 +37,7 @@ pub fn make_table(
 
     //创建三维列表，由外至内分别为行，列，页
     let mut table: Vec<Vec<Vec<Sample>>> =
-        vec![vec![vec![Sample { id: 0, dummy: true }; pages]; columns + 2]; rows + 2];
+        vec![vec![vec![Sample { id: 0, dummy: true }; pages]; columns + 1]; rows + 2];
 
     for x in 1..(rows + 1) {
         for y in 1..(columns + 1) {
@@ -53,6 +53,7 @@ pub fn make_table(
                     })
                     .collect::<Vec<_>>();
                 let mut rng = thread_rng();
+                table[x][y].remove(z);
                 table[x][y].insert(z, **minusion.choose(&mut rng).unwrap());
             }
         }
