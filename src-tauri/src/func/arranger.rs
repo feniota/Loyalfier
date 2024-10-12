@@ -14,6 +14,12 @@ impl PartialEq for Sample {
         }
     }
 }
+pub struct Table {
+    pub rows: usize,
+    pub columns: usize,
+    pub pages: usize,
+    pub table: Vec<Vec<Vec<Sample>>>,
+}
 #[derive(Debug)]
 pub enum MakeTableError {
     NotEnoughSamples,
@@ -26,7 +32,7 @@ pub fn make_table(
     pages: usize,
     rows: usize,
     columns: usize,
-) -> Result<Vec<Vec<Vec<Sample>>>, MakeTableError> {
+) -> Result<Table, MakeTableError> {
     if rows == 0 || columns == 0 || pages == 0 || samples.is_empty() {
         //判断行列页是否为0，以及Sample是否为空
         return Err(MakeTableError::InvalidParameter);
@@ -61,5 +67,10 @@ pub fn make_table(
             }
         }
     }
-    Ok(table)
+    Ok(Table {
+        rows: rows,
+        columns: columns,
+        pages: pages,
+        table: table,
+    })
 }

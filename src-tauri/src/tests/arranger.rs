@@ -19,28 +19,28 @@ pub fn test() {
     match table {
         Ok(x) => {
             assert_eq!(
-                x.len(),
+                x.table.len(),
                 rows + 2,
                 "行数错误，预期为{}，实际为{}",
                 rows + 2,
-                x.len()
+                x.table.len()
             );
             assert_eq!(
-                x[0].len(),
+                x.table[0].len(),
                 columns + 1,
                 "列数错误，预期为{}，实际为{}",
                 columns + 1,
-                x[0].len()
+                x.table[0].len()
             );
             assert_eq!(
-                x[0][0].len(),
+                x.table[0][0].len(),
                 pages,
                 "页数错误，预期为{}，实际为{}",
                 pages,
-                x[0][0].len()
+                x.table[0][0].len()
             );
-            assert_ne!(x[1][1][0], Sample { id: 0, dummy: true });
-            println!("converted vector:\n{:?}]", x)
+            assert_ne!(x.table[1][1][0], Sample { id: 0, dummy: true });
+            println!("converted vector:\n{:?}]", x.table)
         }
         Err(x) => {
             assert!(false, "Encountered unexpected error {:?}", x)
