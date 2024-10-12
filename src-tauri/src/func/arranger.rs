@@ -63,78 +63,82 @@ pub fn make_table(
     Ok(table)
 }
 
-#[test]
-pub fn test() {
-    let Rows = 3;
-    let Columns = 3;
-    let Pages = 3;
-    let table = make_table(
-        vec![
-            Sample {
-                id: 0,
-                dummy: false,
-            },
-            Sample {
-                id: 1,
-                dummy: false,
-            },
-            Sample {
-                id: 2,
-                dummy: false,
-            },
-            Sample {
-                id: 3,
-                dummy: false,
-            },
-            Sample {
-                id: 4,
-                dummy: false,
-            },
-            Sample {
-                id: 5,
-                dummy: false,
-            },
-            Sample {
-                id: 6,
-                dummy: false,
-            },
-            Sample {
-                id: 7,
-                dummy: false,
-            },
-            Sample {
-                id: 8,
-                dummy: false,
-            },
-            Sample {
-                id: 9,
-                dummy: false,
-            },
-            Sample {
-                id: 10,
-                dummy: false,
-            },
-            Sample {
-                id: 11,
-                dummy: false,
-            },
-            Sample {
-                id: 12,
-                dummy: false,
-            },
-        ],
-        Pages,
-        Rows,
-        Columns,
-    );
-    match table {
-        Ok(x) => {
-            assert_eq!(x.len(), Rows + 2);
-            assert_eq!(x[0].len(), Columns + 1);
-            assert_eq!(x[0][0].len(), Pages);
-            assert_ne!(x[1][1][0], Sample { id: 0, dummy: true });
-            println!("converted vector:\n{:?}]", x)
-        }
-        _ => {}
-    };
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    pub fn test() {
+        let Rows = 3;
+        let Columns = 3;
+        let Pages = 3;
+        let table = make_table(
+            vec![
+                Sample {
+                    id: 0,
+                    dummy: false,
+                },
+                Sample {
+                    id: 1,
+                    dummy: false,
+                },
+                Sample {
+                    id: 2,
+                    dummy: false,
+                },
+                Sample {
+                    id: 3,
+                    dummy: false,
+                },
+                Sample {
+                    id: 4,
+                    dummy: false,
+                },
+                Sample {
+                    id: 5,
+                    dummy: false,
+                },
+                Sample {
+                    id: 6,
+                    dummy: false,
+                },
+                Sample {
+                    id: 7,
+                    dummy: false,
+                },
+                Sample {
+                    id: 8,
+                    dummy: false,
+                },
+                Sample {
+                    id: 9,
+                    dummy: false,
+                },
+                Sample {
+                    id: 10,
+                    dummy: false,
+                },
+                Sample {
+                    id: 11,
+                    dummy: false,
+                },
+                Sample {
+                    id: 12,
+                    dummy: false,
+                },
+            ],
+            Pages,
+            Rows,
+            Columns,
+        );
+        match table {
+            Ok(x) => {
+                assert_eq!(x.len(), Rows + 2);
+                assert_eq!(x[0].len(), Columns + 1);
+                assert_eq!(x[0][0].len(), Pages);
+                assert_ne!(x[1][1][0], Sample { id: 0, dummy: true });
+                println!("converted vector:\n{:?}]", x)
+            }
+            _ => {}
+        };
+    }
 }
