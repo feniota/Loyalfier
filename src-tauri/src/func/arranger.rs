@@ -49,8 +49,8 @@ pub fn make_table(
     let mut rng = thread_rng();
 
     //填充列表
-    for x in 1..(rows + 1) {
-        for y in 1..(columns + 1) {
+    for x in 1..=rows {
+        for y in 1..=columns {
             for z in 0..pages {
                 let minusion = samples
                     .iter()
