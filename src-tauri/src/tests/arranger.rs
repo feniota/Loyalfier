@@ -72,6 +72,8 @@ pub fn test() {
             assert_ne!(x[1][1][0], Sample { id: 0, dummy: true });
             println!("converted vector:\n{:?}]", x)
         }
-        _ => {}
+        Err(x) => {
+            panic!("Encountered unexpected error {:?}", x);
+        }
     };
 }

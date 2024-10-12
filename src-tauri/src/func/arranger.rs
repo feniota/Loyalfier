@@ -14,6 +14,7 @@ impl PartialEq for Sample {
         }
     }
 }
+#[derive(Debug)]
 pub enum MakeTableError {
     NotEnoughSamples,
     InvalidParameter,
