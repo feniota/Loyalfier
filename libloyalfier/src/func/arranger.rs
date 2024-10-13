@@ -1,6 +1,6 @@
 use rand::{seq::SliceRandom, thread_rng};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash)]
 pub struct Sample {
     pub id: usize,
     pub dummy: bool,
@@ -14,6 +14,7 @@ impl PartialEq for Sample {
         }
     }
 }
+#[derive(Clone)]
 pub struct Table {
     pub rows: usize,
     pub columns: usize,

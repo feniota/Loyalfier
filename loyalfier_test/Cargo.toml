@@ -1,0 +1,9 @@
+[package]
+name = "loyalfier_test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libloyalfier = { path = "../libloyalfier" }
+rand = "0.8.5"
+ril = { version = "0.10.3", features = ["all"] }
