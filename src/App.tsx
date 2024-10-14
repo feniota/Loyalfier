@@ -120,13 +120,17 @@ function App() {
             历史
           </NavItem>
 
-          <NavItem icon={<Settings />} value="3">
-            设置
-          </NavItem>
 
-          <NavItem className={styles.navItemBottom} icon={<About />} value="4">
-            关于
-          </NavItem>
+          <div className={styles.navItemBottom} >
+
+            <NavItem icon={<Settings />} value="3">
+              设置
+            </NavItem>
+
+            <NavItem icon={<About />} value="4">
+              关于
+            </NavItem>
+          </div>
 
         </NavDrawerBody>
       </NavDrawer>
@@ -152,7 +156,7 @@ function App() {
           />
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
