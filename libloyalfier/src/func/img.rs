@@ -66,6 +66,7 @@ impl Paper {
 
     pub fn obfuscate(&self, obfuscation: PaperObfuscation, row: usize) -> () {
         const COEFFICIENT: f32 = 0.0005;
+        const HORIZONTAL_SHIFT: f32 = 2.0; //对数曲线水平位移
         let mut rng = rand::thread_rng();
         let phase: i32 = rng.gen_range(-18..=18); // 相位，将此行整体上移或下移 +=5mm
         for i in self.table.iter() {
@@ -74,8 +75,10 @@ impl Paper {
                 continue;
             }
             let entropy = rng.gen_range(0.00..=1.00);
-            let delta_y: i32 = (COEFFICIENT * entropy * f32::ln_1p(current.column as f32)) as i32;
-            let delta_deg: i32 = f32::atan(delta_y as f32) as i32;
+            let delta_y: i32 =
+                (COEFFICIENT * entropy * f32::ln_1p(current.column as f32 + HORIZONTAL_SHIFT))
+                    as i32;
+            let delta_deg: i32 = f32::atan(current.column as f32 + HORIZONTAL_SHIFT) as i32;
             match obfuscation {
                 PaperObfuscation::Upward => {
                     current.position[1] += i32_to_usize(delta_y + phase);
