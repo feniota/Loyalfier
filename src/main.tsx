@@ -1,9 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
+import { createRoot } from 'react-dom/client';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+import App from './App';
+
+const root = createRoot(document.getElementById('root') as HTMLElement);
+
+root.render(
+  <FluentProvider theme={webLightTheme}>
     <App />
-  </React.StrictMode>,
+  </FluentProvider>,
 );
