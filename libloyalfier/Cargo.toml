@@ -6,6 +6,5 @@ edition = "2021"
 [dependencies]
 image = "0.25.2"
 # crates.io 上的 photon-rs 会导致 wasm-bindgen 版本与 Tauri 冲突
-photon-rs = { git = "https://github.com/silvia-odwyer/photon.git", default-features = false }
+photon-rs = { git = "https://github.com/silvia-odwyer/photon.git", rev = "d084f684", default-features = false }
 rand = "0.8.5"
-ril = { version = "0.10.3", features = ["all"] }
