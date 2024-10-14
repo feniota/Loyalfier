@@ -42,7 +42,6 @@ impl PaperSize {
 pub struct Transform {
     pub id: usize,
     pub position: [usize; 2],
-    // Take integer here, not float, since ril use degrees for rotation
     pub rotation: f32,
     pub scale: f32,
     pub row: usize,
@@ -132,8 +131,8 @@ impl Paper {
                 transformed = transform::rotate(&transformed, current.rotation.abs());
                 transform::fliph(&mut transformed);
             }
-            let half_height = current_img.get_height().wrapping_div(2) as usize;
-            let half_width = current_img.get_width().wrapping_div(2) as usize;
+            let half_height = transformed.get_height().wrapping_div(2) as usize;
+            let half_width = transformed.get_width().wrapping_div(2) as usize;
             /*img.paste(
                 current.position[0].wrapping_sub(half_width) as u32,
                 current.position[1].wrapping_sub(half_height) as u32,
