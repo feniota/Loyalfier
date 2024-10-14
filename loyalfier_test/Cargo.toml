@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 libloyalfier = { path = "../libloyalfier" }
+photon-rs = { git = "https://github.com/silvia-odwyer/photon.git", default-features = false }
 rand = "0.8.5"
-ril = { version = "0.10.3", features = ["all"] }

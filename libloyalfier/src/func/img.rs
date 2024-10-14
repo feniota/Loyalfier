@@ -1,5 +1,6 @@
+use image::RgbaImage;
+use photon_rs::{multiple, transform, PhotonImage};
 use rand::Rng;
-use ril::{Image, Rgba};
 use std::{cell::Cell, collections::HashMap, rc::Rc};
 
 use super::arranger::{Sample, Table};
@@ -10,7 +11,7 @@ pub struct Paper {
     pub border: [[usize; 2]; 4],
     pub unit_size: [usize; 2],
     pub table: Vec<Cell<Transform>>,
-    pub samples: HashMap<usize, Rc<Image<Rgba>>>,
+    pub samples: HashMap<usize, Rc<PhotonImage>>,
 }
 
 pub enum PaperObfuscation {
@@ -22,6 +23,10 @@ pub enum PaperSize {
     A4,
     A5,
     B5,
+}
+#[derive(Debug)]
+pub enum MakePaperError {
+    PageOutOfIndex,
 }
 impl PaperSize {
     pub fn pixels(&self) -> [usize; 2] {
@@ -38,7 +43,7 @@ pub struct Transform {
     pub id: usize,
     pub position: [usize; 2],
     // Take integer here, not float, since ril use degrees for rotation
-    pub rotation: i32,
+    pub rotation: f32,
     pub scale: f32,
     pub row: usize,
     pub column: usize,
@@ -50,7 +55,7 @@ impl Paper {
         for t in self.table.iter() {
             let mut transform = t.get();
             // 每个样本随机旋转一个小角度
-            transform.rotation = rng.gen_range(-3..=3);
+            transform.rotation = rng.gen_range(-3.0..=3.0);
             // 每个样本随机偏移 +-3mm
             transform.position = [
                 i32_to_usize(transform.position[0] as i32 + rng.gen_range(-11..=11)),
@@ -65,28 +70,30 @@ impl Paper {
     }
 
     pub fn obfuscate(&self, obfuscation: PaperObfuscation, row: usize) -> () {
-        const COEFFICIENT: f32 = 0.0005;
-        const HORIZONTAL_SHIFT: f32 = 2.0; //对数曲线水平位移
+        const COEFFICIENT: f32 = 15.0;
+        const HORIZONTAL_SHIFT: f32 = 0.0; //对数曲线水平位移
         let mut rng = rand::thread_rng();
-        let phase: i32 = rng.gen_range(-18..=18); // 相位，将此行整体上移或下移 +=5mm
+        // let phase: i32 = rng.gen_range(-18..=18); // 相位（弃用），将此行整体上移或下移 +=5mm
         for i in self.table.iter() {
             let mut current = i.get();
             if current.row != row {
                 continue;
             }
-            let entropy = rng.gen_range(0.00..=1.00);
+            let entropy = rng.gen_range(0.70..=1.00);
             let delta_y: i32 =
                 (COEFFICIENT * entropy * f32::ln_1p(current.column as f32 + HORIZONTAL_SHIFT))
                     as i32;
-            let delta_deg: i32 = f32::atan(current.column as f32 + HORIZONTAL_SHIFT) as i32;
+            let delta_deg: f32 = f32::atan(1_f32 / (current.column as f32 + HORIZONTAL_SHIFT));
             match obfuscation {
                 PaperObfuscation::Upward => {
-                    current.position[1] += i32_to_usize(delta_y + phase);
+                    //current.position[1] += i32_to_usize(delta_y + phase);
+                    current.position[1] += i32_to_usize(delta_y);
                     current.rotation += delta_deg;
                 }
                 PaperObfuscation::Downward => {
                     current.position[1] =
-                        i32_to_usize(current.position[1] as i32 + phase - delta_y);
+                        //i32_to_usize(current.position[1] as i32 + phase - delta_y);
+                        i32_to_usize(current.position[1] as i32 - delta_y);
                     current.rotation -= delta_deg;
                 }
             }
@@ -94,38 +101,65 @@ impl Paper {
         }
     }
 
-    pub fn make_image(&self) -> Image<Rgba> {
-        let mut img = Image::new(
+    pub fn make_image(&self) -> PhotonImage {
+        /*let mut img = Image::new(
             self.img_size[0] as u32,
             self.img_size[1] as u32,
             Rgba::transparent(),
+        );*/
+        let img_buffer = RgbaImage::new(self.img_size[0] as u32, self.img_size[1] as u32);
+        let mut img: PhotonImage = PhotonImage::new(
+            img_buffer.into_raw(),
+            self.img_size[0] as u32,
+            self.img_size[1] as u32,
         );
         for t in self.table.iter() {
             let current: Transform = t.get();
             let current_img = self.samples.get(&current.id).unwrap();
-            let transformed = Image::clone(current_img) //.rotated(current.rotation)
-                .resized(
-                    (current_img.width() as f32 * current.scale).round() as u32,
-                    (current_img.height() as f32 * current.scale).round() as u32,
-                    ril::ResizeAlgorithm::Lanczos3,
-                );
-            img.paste(
-                current.position[0] as u32,
-                current.position[1] as u32,
+            let mut transformed = PhotonImage::clone(current_img);
+            transformed = transform::resize(
                 &transformed,
+                (current_img.get_width() as f32 * current.scale).round() as u32,
+                (current_img.get_height() as f32 * current.scale).round() as u32,
+                transform::SamplingFilter::Lanczos3,
             );
+            // 实践证明，如果传递给 rotate 一个负数角度，最终图片会出现一个奇怪的平移，导致结果像是酒醉了一样（
+            // 这里通过翻转后旋转来实现逆时针效果
+            if current.rotation >= 0.0 {
+                transformed = transform::rotate(&transformed, current.rotation);
+            } else {
+                transform::fliph(&mut transformed);
+                transformed = transform::rotate(&transformed, current.rotation.abs());
+                transform::fliph(&mut transformed);
+            }
+            let half_height = current_img.get_height().wrapping_div(2) as usize;
+            let half_width = current_img.get_width().wrapping_div(2) as usize;
+            /*img.paste(
+                current.position[0].wrapping_sub(half_width) as u32,
+                current.position[1].wrapping_sub(half_height) as u32,
+                &transformed,
+            );*/
+            multiple::watermark(
+                &mut img,
+                &transformed,
+                current.position[0].wrapping_sub(half_width) as i64,
+                current.position[1].wrapping_sub(half_height) as i64,
+            )
         }
         img
     }
 
     pub fn make(
-        samples: HashMap<Sample, Rc<Image<Rgba>>>,
+        samples: HashMap<Sample, Rc<PhotonImage>>,
         table: Table,
         page_index: usize,
         paper_size: [usize; 2],
-    ) -> Self {
+    ) -> Result<Self, MakePaperError> {
+        if page_index >= table.pages {
+            return Err(MakePaperError::PageOutOfIndex);
+        }
         // Convert hashmap to avoid Sample to be used outside the algorithm part
-        let mut map: HashMap<usize, Rc<Image<Rgba>>> = HashMap::new();
+        let mut map: HashMap<usize, Rc<PhotonImage>> = HashMap::new();
         for (key, value) in samples.iter() {
             let id = key.id;
             let img = value.clone();
@@ -143,7 +177,7 @@ impl Paper {
             ],
         ];
         let unit_size = [
-            (border[1][0].wrapping_sub(border[0][0])).wrapping_div(table.columns),
+            (border[3][0].wrapping_sub(border[0][0])).wrapping_div(table.columns),
             (border[3][1].wrapping_sub(border[0][1])).wrapping_div(table.rows),
         ];
         let unit_half = [unit_size[0].wrapping_div(2), unit_size[1].wrapping_div(2)];
@@ -166,7 +200,7 @@ impl Paper {
                 let t = Transform {
                     id: current.id,
                     position,
-                    rotation: 0,
+                    rotation: 0.0,
                     scale: 1.0,
                     row: x,
                     column: y,
@@ -175,13 +209,13 @@ impl Paper {
             }
         }
 
-        Paper {
+        Ok(Paper {
             img_size: paper_size,
             border,
             unit_size,
             table: transforms,
             samples: map,
-        }
+        })
     }
 }
 fn i32_to_usize(x: i32) -> usize {
