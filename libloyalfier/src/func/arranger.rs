@@ -1,5 +1,8 @@
 use rand::{seq::SliceRandom, thread_rng};
 
+/// 样本  
+/// - id: usize 样本编号（必须唯一）
+/// - dummy: bool 是否为“假数据”（一般应为 false）
 #[derive(Clone, Copy, Debug, Eq, Hash)]
 pub struct Sample {
     pub id: usize,
@@ -14,6 +17,11 @@ impl PartialEq for Sample {
         }
     }
 }
+
+/// 表格  
+/// - rows: 行数
+/// - columns: 列数
+/// - pages: 纸张数
 #[derive(Clone)]
 pub struct Table {
     pub rows: usize,
@@ -28,6 +36,13 @@ pub enum MakeTableError {
     Other,
 }
 
+/// 生成表格  
+///   
+/// 参数：  
+/// - samples: `Vec<Sample>` 样本（传入的值 dummy 必须为 false）  
+/// - pages: usize 页面数量  
+/// - rows: usize 行数  
+/// - columns: usize 列数
 pub fn make_table(
     samples: Vec<Sample>,
     pages: usize,
