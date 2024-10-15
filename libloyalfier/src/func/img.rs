@@ -102,7 +102,10 @@ impl Paper {
                 // 只处理 {row} 行的单元格
                 continue;
             }
-            let entropy = rng.gen_range(0.80..=1.00); // 熵
+            let entropy = match obfuscation {
+                PaperObfuscation::Upward => rng.gen_range(0.80..=1.00),
+                PaperObfuscation::Downward => rng.gen_range(0.80..=1.00),
+            }; // 熵
 
             // 计算纵坐标的变化量
             let delta_y: i32 =
@@ -111,18 +114,11 @@ impl Paper {
 
             // 计算旋转角度的变化量
             let delta_deg: f32 =
-                f32::atan(coefficient * entropy / (current.column as f32 + HORIZONTAL_SHIFT));
+                coefficient * entropy * f32::atan(1.0 / (current.column as f32 + HORIZONTAL_SHIFT));
 
-            match obfuscation {
-                PaperObfuscation::Upward => {
-                    current.position[1] = i32_to_usize(current.position[1] as i32 - delta_y);
-                    current.rotation -= delta_deg; // 正角度代表顺时针旋转，因此这里是减
-                }
-                PaperObfuscation::Downward => {
-                    current.position[1] += i32_to_usize(delta_y);
-                    current.rotation += delta_deg;
-                }
-            }
+            current.position[1] = i32_to_usize(current.position[1] as i32 - delta_y);
+            current.rotation -= delta_deg; // 正角度代表顺时针旋转，因此这里是减
+
             // 回传值
             i.set(current);
         }
