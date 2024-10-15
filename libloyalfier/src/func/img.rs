@@ -69,33 +69,36 @@ impl Paper {
     }
 
     pub fn obfuscate(&self, obfuscation: PaperObfuscation, row: usize) -> () {
-        const COEFFICIENT: f32 = 15.0;
+        const COEFFICIENT: f32 = 15.0; // 系数（对数曲线垂直方向伸长）
         const HORIZONTAL_SHIFT: f32 = 0.0; //对数曲线水平位移
-        let mut rng = rand::thread_rng();
-        // let phase: i32 = rng.gen_range(-18..=18); // 相位（弃用），将此行整体上移或下移 +=5mm
+        let mut rng = rand::thread_rng(); // 当前线程的 Rng（随机数生成用）
         for i in self.table.iter() {
-            let mut current = i.get();
+            let mut current = i.get(); // 获取当前单元格内的 Transform 元素
             if current.row != row {
+                // 只处理 {row} 行的单元格
                 continue;
             }
-            let entropy = rng.gen_range(0.70..=1.00);
+            let entropy = rng.gen_range(0.70..=1.00); // 熵
+
+            // 计算纵坐标的变化量
             let delta_y: i32 =
                 (COEFFICIENT * entropy * f32::ln_1p(current.column as f32 + HORIZONTAL_SHIFT))
                     as i32;
+
+            // 计算旋转角度的变化量
             let delta_deg: f32 = f32::atan(1_f32 / (current.column as f32 + HORIZONTAL_SHIFT));
+
             match obfuscation {
                 PaperObfuscation::Upward => {
-                    //current.position[1] += i32_to_usize(delta_y + phase);
                     current.position[1] += i32_to_usize(delta_y);
-                    current.rotation += delta_deg;
+                    current.rotation -= delta_deg; // 正角度代表顺时针旋转，因此这里是减
                 }
                 PaperObfuscation::Downward => {
-                    current.position[1] =
-                        //i32_to_usize(current.position[1] as i32 + phase - delta_y);
-                        i32_to_usize(current.position[1] as i32 - delta_y);
-                    current.rotation -= delta_deg;
+                    current.position[1] = i32_to_usize(current.position[1] as i32 - delta_y);
+                    current.rotation += delta_deg;
                 }
             }
+            // 回传值
             i.set(current);
         }
     }
