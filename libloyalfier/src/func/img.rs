@@ -68,9 +68,9 @@ impl Paper {
         // 因为样本本身是在 Cell 里的，所以 self 本身已经是变过的了，这里不用再传出改变后的值
     }
 
-    pub fn obfuscate(&self, obfuscation: PaperObfuscation, row: usize) -> () {
-        const COEFFICIENT: f32 = 15.0; // 系数（对数曲线垂直方向伸长）
-        const HORIZONTAL_SHIFT: f32 = 0.0; //对数曲线水平位移
+    pub fn obfuscate(&self, obfuscation: PaperObfuscation, row: usize, coefficient: f32) -> () {
+        //const COEFFICIENT: f32 = 20.0; // 系数（对数曲线垂直方向伸长）
+        const HORIZONTAL_SHIFT: f32 = 1.0; //对数曲线水平位移
         let mut rng = rand::thread_rng(); // 当前线程的 Rng（随机数生成用）
         for i in self.table.iter() {
             let mut current = i.get(); // 获取当前单元格内的 Transform 元素
@@ -78,23 +78,24 @@ impl Paper {
                 // 只处理 {row} 行的单元格
                 continue;
             }
-            let entropy = rng.gen_range(0.70..=1.00); // 熵
+            let entropy = rng.gen_range(0.80..=1.00); // 熵
 
             // 计算纵坐标的变化量
             let delta_y: i32 =
-                (COEFFICIENT * entropy * f32::ln_1p(current.column as f32 + HORIZONTAL_SHIFT))
+                (coefficient * entropy * f32::ln_1p(current.column as f32 + HORIZONTAL_SHIFT))
                     as i32;
 
             // 计算旋转角度的变化量
-            let delta_deg: f32 = f32::atan(1_f32 / (current.column as f32 + HORIZONTAL_SHIFT));
+            let delta_deg: f32 =
+                f32::atan(coefficient * entropy / (current.column as f32 + HORIZONTAL_SHIFT));
 
             match obfuscation {
                 PaperObfuscation::Upward => {
-                    current.position[1] += i32_to_usize(delta_y);
+                    current.position[1] = i32_to_usize(current.position[1] as i32 - delta_y);
                     current.rotation -= delta_deg; // 正角度代表顺时针旋转，因此这里是减
                 }
                 PaperObfuscation::Downward => {
-                    current.position[1] = i32_to_usize(current.position[1] as i32 - delta_y);
+                    current.position[1] += i32_to_usize(delta_y);
                     current.rotation += delta_deg;
                 }
             }

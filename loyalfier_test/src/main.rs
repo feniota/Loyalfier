@@ -46,14 +46,16 @@ fn main() {
     // for index in 0..3 {
     let index = 0;
     let i = &papers[index];
-    let obf = match rng.gen_range(0..=1) {
+    /*let obf = match rng.gen_range(0..=1) {
         0 => PaperObfuscation::Upward,
         1 => PaperObfuscation::Downward,
         _ => panic!("Should never happen"),
-    };
-    let row = rng.gen_range(1..=3);
-    i.alter();
-    i.obfuscate(obf, row);
+    };*/
+    let obf = PaperObfuscation::Upward;
+    //let row = rng.gen_range(1..=3);
+    let row = 3;
+    i.obfuscate(obf, row, 30.0);
+    //i.alter();
     let ultimate = i.make_image();
     let x = save_image(
         ultimate,
