@@ -103,8 +103,8 @@ impl Paper {
                 continue;
             }
             let entropy = match obfuscation {
-                PaperObfuscation::Upward => rng.gen_range(0.80..=1.00),
-                PaperObfuscation::Downward => rng.gen_range(-0.80..=-1.00),
+                PaperObfuscation::Upward => rng.gen_range(0.70..=1.00),
+                PaperObfuscation::Downward => rng.gen_range(-1.00..=-0.70),
             }; // 熵
 
             // 计算纵坐标的变化量
