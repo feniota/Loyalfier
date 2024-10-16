@@ -40,7 +40,7 @@ impl PaperSize {
         match self {
             PaperSize::A4 => [2480, 3508],
             PaperSize::A5 => [1240, 1754],
-            PaperSize::B5 => [1624, 1075],
+            PaperSize::B5 => [1860, 2631],
         }
     }
 }
