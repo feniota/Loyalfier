@@ -114,7 +114,7 @@ impl Paper {
 
             // 计算旋转角度的变化量
             let delta_deg: f32 =
-                coefficient * entropy * f32::atan(1.0 / (current.column as f32 + HORIZONTAL_SHIFT));
+                f32::atan(coefficient * entropy / (current.column as f32 + HORIZONTAL_SHIFT));
 
             current.position[1] = i32_to_usize(current.position[1] as i32 - delta_y);
             current.rotation -= delta_deg; // 正角度代表顺时针旋转，因此这里是减
