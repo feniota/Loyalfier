@@ -21,6 +21,8 @@
 
 原理为随机排列并随机缩放/位移/旋转变换样本，混淆后用喷墨打印机打印即可混过老师的检查。
 
+UI施工中
+
 # Tauri + React + Typescript
 
 This template should help get you started developing with Tauri, React and Typescript in Vite.
