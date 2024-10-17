@@ -1,4 +1,4 @@
-pub mod func;
+mod func;
 #[cfg(test)]
 mod tests;
 
