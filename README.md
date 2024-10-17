@@ -4,7 +4,7 @@
 
 >愿你永远不会用上这个软件
 
-此项目暂时未完成，但已可用，修改[测试项目]（/loyalfier_test)中的`src/main.rs`并运行`cargo run --release`
+此项目暂时未完成，但已可用，修改[测试项目](/loyalfier_test)中的`src/main.rs`并运行`cargo run --release`
 
 ```
     // Configuration field
