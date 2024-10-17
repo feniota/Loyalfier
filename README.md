@@ -12,7 +12,8 @@
     const COLUMNS: usize = 4;                   //单页列数
     const ROWS: usize = 12;                     //单页行数
     const PAGES: usize = 5;                     //页数
-    let paper_size = PaperSize::B5.pixels();    //输出纸张大小，支持A4,A5,B5
+    let paper_size = PaperSize::B5.pixels();    //输出纸张大小，内置 A4,A5,B5
+                                                               也可以用 [宽度,高度] 指定（单位：像素）
     let in_path = String::from(".\\images_\\"); //样本目录
     let out_path = String::from(".\\output\\"); //输出目录
 ```
