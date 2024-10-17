@@ -1,4 +1,4 @@
-# Loyalifier
+# Loyalfier
 
 忠诚化器，使你忠于老师的重度作业
 
