@@ -7,12 +7,12 @@ use rand::Rng;
 use std::{collections::HashMap, rc::Rc};
 fn main() {
     // Configuration field
-    const SAMPLES: usize = 20;
-    const COLUMNS: usize = 4;
-    const ROWS: usize = 12;
-    const PAGES: usize = 5;
+    const SAMPLES: usize = 15;
+    const COLUMNS: usize = 5;
+    const ROWS: usize = 20;
+    const PAGES: usize = 6;
     let paper_size = PaperSize::B5.pixels();
-    let in_path = String::from(".\\images_\\");
+    let in_path = String::from(".\\images\\");
     let out_path = String::from(".\\output\\");
 
     let mut images: Vec<Rc<PhotonImage>> = vec![];
