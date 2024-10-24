@@ -10,7 +10,7 @@ fn main() {
     const SAMPLES: usize = 15;
     const COLUMNS: usize = 5;
     const ROWS: usize = 20;
-    const PAGES: usize = 6;
+    const PAGES: usize = 5;
     let paper_size = PaperSize::B5.pixels();
     let in_path = String::from(".\\images\\");
     let out_path = String::from(".\\output\\");
