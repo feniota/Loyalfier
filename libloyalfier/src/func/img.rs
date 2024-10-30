@@ -38,9 +38,9 @@ impl PaperSize {
     /// 由纸张尺寸生成图片尺寸
     pub fn pixels(&self) -> [usize; 2] {
         match self {
-            PaperSize::A4 => [2480, 3508],
-            PaperSize::A5 => [1240, 1754],
-            PaperSize::B5 => [1860, 2631],
+            PaperSize::A4 => [2480 * 2, 3508 * 2], //修正为600ppi
+            PaperSize::A5 => [1240 * 2, 1754 * 2], //修正为600ppi
+            PaperSize::B5 => [1860 * 2 + 297, 2631 * 2 + 354], //修正为600ppi,并增大尺寸防止重叠
         }
     }
 }

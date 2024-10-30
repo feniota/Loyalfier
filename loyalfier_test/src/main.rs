@@ -7,7 +7,7 @@ use rand::Rng;
 use std::{collections::HashMap, rc::Rc};
 fn main() {
     // Configuration field
-    const SAMPLES: usize = 15;
+    const SAMPLES: usize = 20;
     const COLUMNS: usize = 5;
     const ROWS: usize = 20;
     const PAGES: usize = 5;
